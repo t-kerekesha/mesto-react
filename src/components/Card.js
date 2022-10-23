@@ -31,7 +31,7 @@ class Card extends React.Component {
   }
 
   closeTooltip() {
-    this.setState({ isOpenTooltip: false});
+    this.setState({ isOpenTooltip: false });
   }
 
   render() {
@@ -79,13 +79,11 @@ class Card extends React.Component {
         </li>
       ))}
 
-      {this.state.isOpenTooltip &&
-        <Tooltip
-          isOpen={this.state.isOpenTooltip}
-          likes={this.state.likes}
-          position={this.state.positionTooltip} />
-      }
-      </>
+      <Tooltip
+        isOpen={this.state.isOpenTooltip}
+        likes={this.state.likes}
+        position={this.state.positionTooltip} />
+    </>
     );
   }
 }

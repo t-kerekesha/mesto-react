@@ -1,27 +1,39 @@
-import React from "react";
+import {useEffect, useState, useRef } from 'react';
 
 function Tooltip(props) {
-  const [isOpen, setOpen] = React.useState(props.isOpen);
-  const [position, setPosition] = React.useState({
-    top: props.position.top,
-    left: props.position.left,
-    right: 'auto'
+  const [position, setPosition] = useState({
+    top: 0,
+    left: 0,
+    right: 0
   });
-  const tooltip = React.useRef(null);
+  const [coordinates, setCoordinates] = useState(null);
+  const tooltip = useRef(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
+    setPosition({
+      top: props.position.top,
+      left: props.position.left,
+      right: 'auto'
+    });
+  }, [props.isOpen]);
+
+  useEffect(() => {
+    setCoordinates(tooltip.current.getBoundingClientRect())
+  }, [props.isOpen]);
+
+  useEffect(() => {
     const coords = tooltip.current.getBoundingClientRect();
     if(coords.right > document.documentElement.clientWidth) {
       setPosition({
         top: position.top,
         left: 'auto',
         right: 0
-      })
+      });
     }
-  }, []);
+  }, [coordinates]);
 
   return (
-    <div className={`tooltip-likes ${isOpen && 'popup_opened'}`}
+    <div className={`tooltip-likes ${props.isOpen && 'popup_opened'}`}
       ref={tooltip}
       style={{
             top: position.top,

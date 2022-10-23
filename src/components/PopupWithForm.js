@@ -1,7 +1,6 @@
 import React from "react";
 
 function PopupWithForm(props) {
-  const [isOpen, setOpen] = React.useState(props.isOpen);
 
   React.useEffect(() => {
     document.addEventListener('keydown', handleEscClose);
@@ -17,12 +16,11 @@ function PopupWithForm(props) {
   }
 
   function close() {
-    setOpen(false);
     props.onClose();
   }
 
   return(
-    <div className={`popup popup_type_form popup_type_${props.name} ${isOpen && 'popup_opened'}`}
+    <div className={`popup popup_type_form popup_type_${props.name} ${props.isOpen && 'popup_opened'}`}
       role="dialog"
       aria-modal="true"
       tabIndex="-1"
@@ -39,6 +37,10 @@ function PopupWithForm(props) {
           {props.title}
         </h2>
         {props.children}
+        <button type="submit"
+          className="form__save-button">
+            {props.buttonText}
+        </button>
       </form>
     </div>
   );
