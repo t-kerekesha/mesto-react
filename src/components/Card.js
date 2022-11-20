@@ -1,10 +1,14 @@
 import React from "react";
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import Tooltip from "./Tooltip";
 
 class Card extends React.Component {
+  static contextType = CurrentUserContext;
   constructor(props) {
     super(props);
     this.handleCardClick = this.handleCardClick.bind(this);
+    this.handleLikeClick = this.handleLikeClick.bind(this);
+    this.handleDeleteClick = this.handleDeleteClick.bind(this);
     this.openTooltip = this.openTooltip.bind(this);
     this.closeTooltip = this.closeTooltip.bind(this);
     this.state = {
@@ -15,8 +19,16 @@ class Card extends React.Component {
     };
   }
 
-  handleCardClick(card) {
-    this.props.onCardClick(card);
+  handleCardClick() {
+    this.props.onCardClick(this.props.card);
+  }
+
+  handleLikeClick() {
+    this.props.onCardLike(this.props.card);
+  }
+
+  handleDeleteClick() {
+    this.props.onCardDelete(this.props.card);
   }
 
   openTooltip({ likes, top, left }) {
@@ -35,35 +47,46 @@ class Card extends React.Component {
   }
 
   render() {
+    const isOwn = this.props.card.owner._id === this.context._id;
+    const cardDeleteButtonClassName = (
+      `card__delete-button  button ${isOwn && 'card__delete-button_visible'}`
+    );
+
+    const isLiked = this.props.card.likes.some((user) => {
+      return user._id === this.context._id;
+    });
+    const cardLikeButtonClassName = (
+      `card__like-button ${isLiked && "card__like-button_active"}`
+    );
+
     return (
       <>
-      {this.props.cards.map((card, i) => (
-        <li key={card._id} className="gallery__list-item">
+        <li className="gallery__list-item">
           <figure className="card">
             <div className="card__aspect-ratio">
-              <img src={card.link}
+              <img src={this.props.card.link}
                 className="card__image"
-                alt={card.name}
-                onClick={() => {
-                  this.handleCardClick(card);
-                }}
+                alt={this.props.card.name}
+                onClick={this.handleCardClick}
               />
             </div>
-            <button className="card__delete-button button"
+            <button className={cardDeleteButtonClassName}
               type="button"
-              aria-label="Удалить">
+              aria-label="Удалить"
+              onClick={this.handleDeleteClick}>
             </button>
             <figcaption className="card__container-caption">
               <h2 className="card__caption">
-                {card.name}
+                {this.props.card.name}
               </h2>
-              <button className="card__like-button"
+              <button className={cardLikeButtonClassName}
                 type="button"
                 aria-label="Лайк"
+                onClick={this.handleLikeClick}
                 onMouseEnter={(event) => {
-                  if(card.likes.length > 0) {
+                  if(this.props.card.likes.length > 0) {
                     this.openTooltip({
-                      likes: card.likes,
+                      likes: this.props.card.likes,
                       top: event.pageY,
                       left: event.pageX
                     })
@@ -72,12 +95,11 @@ class Card extends React.Component {
                 onMouseLeave={this.closeTooltip} >
               </button>
               <p className="card__like-counter">
-                {card.likes.length}
+                {this.props.card.likes.length}
               </p>
             </figcaption>
           </figure>
         </li>
-      ))}
 
       <Tooltip
         isOpen={this.state.isOpenTooltip}

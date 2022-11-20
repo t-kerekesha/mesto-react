@@ -7,16 +7,19 @@ function ImagePopup(props) {
     return () => {
       document.removeEventListener('keydown', handleEscClose);
     }
-  }, []);
+  }, [props.isOpen]);
 
   function handleEscClose(event) {
     if (event.key === 'Escape') {
-      close();
+      props.onClose();
     }
   }
 
-  function close() {
-    props.onClose();
+  function close(event) {
+    if (event.target.classList.contains('popup_opened') ||
+        event.target.classList.contains('popup__close-button')) {
+        props.onClose();
+      }
   }
 
   return (
@@ -31,11 +34,11 @@ function ImagePopup(props) {
         onMouseDown={close}>
       </button>
       <figure className="popup__container popup__container_type_zoom-image">
-        <img src={props.card != null ? props.card.link : "#"}
+        <img src={props.card?.link}
           className="popup__zoom-image"
-          alt={props.card != null ? props.card.name : "" } />
+          alt={props.card?.name} />
         <figcaption className="popup__zoom-caption">
-          {props.card != null ? props.card.name : ""}
+          {props.card?.name}
         </figcaption>
       </figure>
     </div>

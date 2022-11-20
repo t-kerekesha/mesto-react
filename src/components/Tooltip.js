@@ -1,4 +1,4 @@
-import {useEffect, useState, useRef } from 'react';
+import {useEffect, useState, useRef, memo } from 'react';
 
 function Tooltip(props) {
   const [position, setPosition] = useState({
@@ -49,4 +49,4 @@ function Tooltip(props) {
   );
 }
 
-export default Tooltip;
+export default memo(Tooltip);

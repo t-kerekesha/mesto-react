@@ -1,22 +1,50 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 
 function PopupWithForm(props) {
+  const formRef = useRef();
 
-  React.useEffect(() => {
+  useEffect(() => {
     document.addEventListener('keydown', handleEscClose);
     return () => {
       document.removeEventListener('keydown', handleEscClose);
     }
   }, []);
 
+  useEffect(() => {
+    if(props.isOpen) {
+      setTimeout(() => {
+        formRef.current.elements[0].focus();
+      }, 200);
+    }
+    if(props.onResetValidators) {
+      props.onResetValidators(props.name);
+    }
+  }, [props.isOpen]);
+
   function handleEscClose(event) {
     if (event.key === 'Escape') {
-      close();
+      props.onClose();
+      formRef.current.reset();
     }
   }
 
-  function close() {
-    props.onClose();
+  function close(event) {
+    if (event.target.classList.contains('popup_opened') ||
+        event.target.classList.contains('popup__close-button')) {
+        props.onClose();
+        formRef.current.reset();
+      }
+  }
+
+  function handleSubmit(event) {
+    props.onSubmit(event);
+    formRef.current.reset();
+  }
+
+  function handleReset() {
+    if (props.onResetForm) {
+      props.onResetForm();
+    }
   }
 
   return(
@@ -31,7 +59,10 @@ function PopupWithForm(props) {
         onMouseDown={close}>
       </button>
       <form className={`popup__container ${props.classContainer} form`}
-        name="edit-profile"
+        onSubmit={handleSubmit}
+        onReset={handleReset}
+        name={props.name}
+        ref={formRef}
         noValidate>
         <h2 className="form__title">
           {props.title}
