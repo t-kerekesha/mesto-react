@@ -48,7 +48,7 @@ function App() {
         console.log(error);
       })
       .finally(() => setIsLoading(false));
-  }, [currentUser]);
+  }, []);
 
   useEffect(() => {
     enableValidation(validationParams);

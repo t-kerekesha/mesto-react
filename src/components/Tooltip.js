@@ -15,10 +15,7 @@ function Tooltip(props) {
       left: props.position.left,
       right: 'auto'
     });
-  }, [props.isOpen]);
-
-  useEffect(() => {
-    setCoordinates(tooltip.current.getBoundingClientRect())
+    setCoordinates(tooltip.current.getBoundingClientRect());
   }, [props.isOpen]);
 
   useEffect(() => {
